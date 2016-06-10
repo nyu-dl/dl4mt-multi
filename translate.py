@@ -17,8 +17,7 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
 from mcg.models import EncoderDecoder, MultiEncoder, MultiDecoder
 from mcg.sampling import gen_sample
-from mcg.utils import (get_enc_dec_ids, p_, seqs2words, words2seqs,
-                       get_version)
+from mcg.utils import get_enc_dec_ids, p_, seqs2words, words2seqs
 
 from multiprocessing import Process, Queue
 from subprocess import Popen, PIPE
@@ -79,7 +78,7 @@ def calculate_bleu(bleu_script, trans, gold):
 
 def _translate(seq, f_init, f_next, trg_eos_idx, src_sel, trg_sel,
                k, cond_init_trg, normalize, n_best, **kwargs):
-    sample, score, decalphas = gen_sample(
+    sample, score = gen_sample(
         f_init, f_next, x=numpy.array(seq).reshape([len(seq), 1]),
         eos_idx=trg_eos_idx, src_selector=src_sel, trg_selector=trg_sel,
         k=k, maxlen=3*len(seq), stochastic=False, argmax=False,
@@ -126,9 +125,6 @@ def main(config, model, normalize=False, n_process=5, chr_level=False,
     # Translate only the chosen cgs if they are valid
     if cgs_to_translate is None:
         cgs_to_translate = config['cgs']
-
-    # Determine the version, this is for backward compatibility
-    version = get_version(config)
 
     # Check if computational graphs are valid
     if not set(config['cgs']) >= set(cgs_to_translate) and not zero_shot:
@@ -184,7 +180,6 @@ def main(config, model, normalize=False, n_process=5, chr_level=False,
         f_init = f_inits[cg_name]
         f_next = f_nexts[cg_name]
         f_next_state = f_next_states.get(cg_name, None)
-        aux_lm = enc_dec.decoder.decoders[dec_name].aux_lm
 
         # For monolingual paths do not perform any translations
         if enc_name == dec_name or cg_name not in cgs_to_translate:
@@ -285,8 +280,7 @@ def main(config, model, normalize=False, n_process=5, chr_level=False,
                         src_selector_input, trg_selector_input,
                         config['beam_size'],
                         config.get('cond_init_trg', False),
-                        normalize, n_best, f_next_state=f_next_state,
-                        version=version, aux_lm=aux_lm)
+                        normalize, n_best, f_next_state=f_next_state)
                     trans.append(_t)
                     scores.append(_s)
 
@@ -302,9 +296,7 @@ def main(config, model, normalize=False, n_process=5, chr_level=False,
                           src_selector_input, trg_selector_input,
                           trg_vocab['</S>'], config['beam_size'], normalize,
                           config.get('cond_init_trg', False), n_best),
-                    kwargs={'f_next_state': f_next_state,
-                            'version': version,
-                            'aux_lm': aux_lm})
+                    kwargs={'f_next_state': f_next_state})
                 processes[midx].start()
 
             n_samples = _send_jobs(source_file)
