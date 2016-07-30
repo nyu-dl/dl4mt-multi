@@ -288,3 +288,12 @@ def invert_vocab(vocab):
     for kk, vv in vocab.iteritems():
         ivocab[vv] = kk
     return ivocab
+
+
+def get_num_lines(fname):
+    '''Returns the number of lines in a file.'''
+    count = 0
+    with open(fname, 'r') as f:
+        for line in f:
+            count += 1
+    return count

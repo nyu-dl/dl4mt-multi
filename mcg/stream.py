@@ -12,7 +12,7 @@ from fuel.streams import DataStream
 from fuel.transformers import (
     Transformer, Merge, Batch, Filter, Padding, SortMapping, Unpack, Mapping)
 
-from .utils import p_, get_enc_dec_ids
+from .utils import p_, get_enc_dec_ids, get_num_lines
 
 logger = logging.getLogger(__name__)
 
@@ -379,7 +379,10 @@ def get_logprob_streams(config):
             else:
                 bs = config['log_prob_bs']
 
-        stream = Batch(stream, iteration_scheme=ConstantScheme(bs))
+        stream = Batch(
+            stream,
+            iteration_scheme=ConstantScheme(
+                bs, num_examples=get_num_lines(datasets[cg][0])))
 
         masked_stream = Padding(stream)
         masked_stream = Mapping(
@@ -419,8 +422,16 @@ def get_log_prob_stream(cg, config):
                      src_vocab_size=config['src_vocab_sizes'][eid],
                      trg_vocab_size=config['trg_vocab_sizes'][did],
                      unk_id=config['unk_id']))
-    stream = Batch(stream, iteration_scheme=ConstantScheme(
-                   config.get('log_prob_bs', 100)))
+    bs = 100
+    if 'log_prob_bs' in config:
+        if isinstance(config['log_prob_bs'], dict):
+            bs = config['log_prob_bs'][cg]
+        else:
+            bs = config['log_prob_bs']
+    stream = Batch(
+        stream,
+        iteration_scheme=ConstantScheme(
+            bs, num_examples=get_num_lines(dataset[0])))
 
     masked_stream = Padding(stream)
     masked_stream = Mapping(
