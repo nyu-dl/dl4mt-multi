@@ -36,7 +36,7 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--num-process', '-p', type=int, default=5,
                         help="Number of process to use for decoding")
-    parser.add_argument('--config', type=str,
+    parser.add_argument('--config', type=str, default="config",
                         help="model config for translation")
     parser.add_argument('--proto', type=str,
                         help="Model prototype from config")

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # Get the arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="model config file")
+    parser.add_argument("--config", default="config", help="model config file")
     parser.add_argument("--proto",
                         default="get_config_multiWay",
                         help="Prototype config to use for model configuration")

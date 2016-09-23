@@ -21,8 +21,8 @@ SHUT_DOWN = False
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', "-c", 
-			help="configuration file for translation script")
+    parser.add_argument('--config', "-c", default="config",
+			help="config file for translation script")
     parser.add_argument("-m", "--model-dir",
                         help="Parameter list for bleu script")
     parser.add_argument('--num-process', '-p', type=int, default=10)
