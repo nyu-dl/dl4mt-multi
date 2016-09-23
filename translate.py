@@ -10,6 +10,7 @@ import pprint
 import re
 import theano
 import time
+import importlib
 
 
 from theano import tensor
@@ -35,6 +36,8 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--num-process', '-p', type=int, default=5,
                         help="Number of process to use for decoding")
+    parser.add_argument('--config', type=str,
+                        help="model config for translation")
     parser.add_argument('--proto', type=str,
                         help="Model prototype from config")
     parser.add_argument('--normalize', '-n', action="store_true",
@@ -338,8 +341,8 @@ if __name__ == "__main__":
 
     args = get_parser().parse_args()
 
-    import config as configuration
-
+    configuration = importlib.import_module(
+        args.config.split('.')[0] if '.py' in args.config else args.config)
     config = getattr(configuration, args.proto)().copy()
     if args.changes is not None:
         config.update(args.changes)
