@@ -188,7 +188,7 @@ class _too_long(object):
     def __init__(self, seq_len=50):
         self.seq_len = seq_len
 
-    def __call__(self, sentence_pair):
+    def __call__(self, sentence_pair, dummy):
         return all([len(sentence) <= self.seq_len
                     for sentence in sentence_pair])
 
