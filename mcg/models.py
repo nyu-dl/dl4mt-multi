@@ -903,8 +903,8 @@ class EncoderDecoder(object):
                 .format(name, len(cg.parameters)))
 
     def get_training_params(self, cgs, exclude_encs=None, exclude_decs=None,
-                            additional_excludes=None, readout_only=None,
-                            train_shared=None):
+                            exclude_embs=None, additional_excludes=None,
+                            readout_only=None, train_shared=None):
         """
         cgs : list of computational graph names
         exclude_encs : bool, whether to exclude encoders from training
@@ -934,6 +934,16 @@ class EncoderDecoder(object):
 
         if exclude_decs is not None:
             raise NotImplementedError
+
+        # Exclude embedding
+        if exclude_embs is not None and exclude_embs:
+            for name, cg in cgs.items():
+                for p in cg.parameters:
+                    if p.name.startswith('Wemb'):
+                        pidx = get_param_idx(training_params[name], p.name)
+                        if pidx is not None:
+                            excluded_params[name].append(
+                                training_params[name].pop(pidx))
 
         # Filter everything and train only readout
         if readout_only is not None:

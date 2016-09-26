@@ -161,6 +161,7 @@ def prototype_config_multiCG_08(cgs):
     config['save_accumulators'] = True  # algorithms' update step variables
     config['load_accumulators'] = True  # be careful with this
     config['exclude_encs'] = get_odict(enc_ids, False)
+    config['exclude_embs'] = False
     config['min_seq_lens'] = get_odict(cgs, 0)
     config['additional_excludes'] = get_odict(cgs, [])
 
