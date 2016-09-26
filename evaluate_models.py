@@ -21,6 +21,8 @@ SHUT_DOWN = False
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--config', "-c", default="config",
+			help="config file for translation script")
     parser.add_argument("-m", "--model-dir",
                         help="Parameter list for bleu script")
     parser.add_argument('--num-process', '-p', type=int, default=10)
@@ -43,16 +45,18 @@ def sigint_handler(_signo, _stack_frame):
     SHUT_DOWN = True
 
 
-def call_script(model_path, proto, eval_script,
+def call_script(model_path, config, proto, eval_script,
                 num_process=10, normalize=True):
     '''
     open pipe and call the script
     '''
     try:
         subprocess.call(
-            " python {} {} --proto={} "
+            " python {} {} --config={} "
+            " --proto={} "
             " -p {} {} {}".format(
-                eval_script, model_path, proto, num_process,
+                eval_script, model_path, config,
+                proto, num_process,
                 ' -n ' if normalize else ''),
             shell=True)
     except:

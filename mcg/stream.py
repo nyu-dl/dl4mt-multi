@@ -185,12 +185,13 @@ class _oov_to_unk(object):
 
 
 class _too_long(object):
-    def __init__(self, seq_len=50):
-        self.seq_len = seq_len
+    def __init__(self, src_seq_len=50, tgt_seq_len=50):
+        self.src_seq_len = src_seq_len
+        self.tgt_seq_len = tgt_seq_len
 
-    def __call__(self, sentence_pair):
-        return all([len(sentence) <= self.seq_len
-                    for sentence in sentence_pair])
+    def __call__(self, sentence_pair, dummy):
+        return all([len(sentence_pair[0]) <= self.src_seq_len,
+                    len(sentence_pair[1]) <= self.tgt_seq_len])
 
 
 class _too_short(object):
@@ -264,7 +265,8 @@ def get_src_trg_stream(cg, config, src_datasets=None, trg_datasets=None,
         stream = Merge([src_datasets[cg].get_example_stream(),
                         trg_datasets[cg].get_example_stream()],
                        ('source', 'target'))
-        stream = Filter(stream, predicate=_too_long(config['seq_len']))
+        stream = Filter(stream, predicate=_too_long(config['src_seq_len'],
+                                                    config['tgt_seq_len']))
 
         if 'min_seq_lens' in config and config['min_seq_lens'][cg] > 0:
             stream = Filter(stream,

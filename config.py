@@ -58,7 +58,8 @@ def prototype_config_singleCG_08():
     config = {}
     config['num_encs'] = 1
     config['num_decs'] = 1
-    config['seq_len'] = 50
+    config['src_seq_len'] = 50
+    config['tgt_seq_len'] = 50
     config['representation_dim'] = 1200  # joint annotation dimension
 
     # Additional options for the model
@@ -128,7 +129,8 @@ def prototype_config_multiCG_08(cgs):
     config['cgs'] = cgs
     config['num_encs'] = len(enc_ids)
     config['num_decs'] = len(dec_ids)
-    config['seq_len'] = 50
+    config['src_seq_len'] = 50
+    config['tgt_seq_len'] = 50
     config['representation_dim'] = 1200  # joint annotation dimension
     config['enc_nhids'] = get_odict(enc_ids, 1000)
     config['dec_nhids'] = get_odict(dec_ids, 1000)
@@ -159,6 +161,7 @@ def prototype_config_multiCG_08(cgs):
     config['save_accumulators'] = True  # algorithms' update step variables
     config['load_accumulators'] = True  # be careful with this
     config['exclude_encs'] = get_odict(enc_ids, False)
+    config['exclude_embs'] = False
     config['min_seq_lens'] = get_odict(cgs, 0)
     config['additional_excludes'] = get_odict(cgs, [])
 
