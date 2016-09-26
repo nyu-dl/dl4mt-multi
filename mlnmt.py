@@ -70,6 +70,7 @@ def train(config, tr_stream, dev_stream, logprob_stream):
     # Get training parameters with optional excludes
     training_params, excluded_params = enc_dec.get_training_params(
         cgs, exclude_encs=config['exclude_encs'],
+        exclude_embs=config['exclude_embs'],
         additional_excludes=config['additional_excludes'],
         readout_only=config.get('readout_only', None),
         train_shared=config.get('train_shared', None))
