@@ -54,7 +54,7 @@ def call_script(model_path, config, proto, eval_script,
         subprocess.call(
             " python {} {} --config={} "
             " --proto={} "
-            " -p {} {} {}".format(
+            " -p {} {}".format(
                 eval_script, model_path, config,
                 proto, num_process,
                 ' -n ' if normalize else ''),
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         items_to_eval = sort_by_iter(items_to_eval)
         for item in items_to_eval:
             print 'LAUNCHING JOB FOR MODEL: {}'.format(item)
-            call_script(os.path.join(args.model_dir, item), args.proto,
+            call_script(os.path.join(args.model_dir, item), args.config, args.proto,
                         args.eval_script, args.num_process, args.normalize)
         items_evaluated += items_to_eval
         items_to_eval = list(
